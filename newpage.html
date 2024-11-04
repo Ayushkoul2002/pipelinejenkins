@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scribbled Login Page</title>
+
+    <!-- Handwritten Font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            font-family: 'Patrick Hand', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            color: #333;
+            padding: 20px;
+        }
+
+        /* Centered Container */
+        .container {
+            width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Title */
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        h1 span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            animation: scribble 0.5s forwards; /* Added animation */
+        }
+
+        @keyframes scribble {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-10px) rotate(-5deg);
+            }
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        /* Animated Border */
+        .animated-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            border: 2px solid transparent; /* Base border */
+            box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.5);
+            animation: border-scribble 0.8s infinite alternate;
+        }
+
+        @keyframes border-scribble {
+            0% {
+                transform: translate(0, 0);
+            }
+            25% {
+                transform: translate(-3px, -3px);
+            }
+            50% {
+                transform: translate(3px, -3px);
+            }
+            75% {
+                transform: translate(-3px, 3px);
+            }
+            100% {
+                transform: translate(0, 3px);
+            }
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #555;
+            text-align: left;
+            width: 100%;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.1rem;
+            font-family: 'Patrick Hand', cursive;
+            margin-bottom: 20px;
+            border: 2px solid #ffcc00;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #ff9900;
+        }
+
+        /* Remember Me Checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 2px solid #ffcc00;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkbox-container input[type="checkbox"]:checked {
+            background-color: #ffcc00; /* Background color when checked */
+        }
+
+        .checkbox-container input[type="checkbox"]:checked:before {
+            content: '✓';
+            position: absolute;
+            left: 2px;
+            top: -3px;
+            font-size: 20px; /* Adjust size as needed */
+            color: #fff;
+            transform: rotate(-15deg);
+        }
+
+        .checkbox-label {
+            position: relative;
+            top: 1px; /* Adjusts vertical alignment */
+            font-size: 1rem; /* Font size for label */
+        }
+
+        /* Scribbled Button */
+        button {
+            padding: 10px 20px;
+            font-size: 1.3rem;
+            color: #fff;
+            background-color: #ffcc00;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+            border: none;
+            border-radius: 5px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e6b800;
+        }
+
+        /* Rough.js Canvas Container for Scribbled Effects */
+        .rough-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .background-scribbles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Footer Section */
+        footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        /* Social Media Icons */
+        .social-icons {
+            margin-top: 10px;
+        }
+
+        .social-icons a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #555;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #ffcc00;
+        }
+
+        /* Forgot Password Link */
+        .forgot-password {
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 10px;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Sign Up Prompt */
+        .signup-prompt {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .signup-prompt a {
+            color: #ffcc00;
+            text-decoration: none;
+        }
+
+        .signup-prompt a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Scribbles -->
+    <canvas class="background-scribbles" id="background-scribbles"></canvas>
+
+    <!-- Scribbled Login Container -->
+    <div class="container">
+        <div class="animated-border"></div>
+        <h1 id="title">Login</h1>
+        <form id="loginForm">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            
+            <div class="checkbox-container">
+                <input type="checkbox" id="rememberMe" name="rememberMe">
+                <label for="rememberMe" class="checkbox-label">Remember Me</label>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+        <div class="forgot-password">Forgot Password?</div>
+        <div class="signup-prompt">Don't have an account? <a href="#">Sign Up</a></div>
+        <canvas class="rough-canvas" id="canvas"></canvas>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>FOLLOW US ON</p>
+        <div class="social-icons">
+            <a href="#" title="Facebook">🌐</a>
+            <a href="#" title="Twitter">🐦</a>
+            <a href="#" title="Instagram">📸</a>
+        </div>
+    </footer>
+
+    <!-- Updated Rough.js Script (UMD for browsers) -->
+    <script src="https://cdn.jsdelivr.net/npm/roughjs@4.3.1/bundled/rough.min.js"></script>
+
+    <script>
+        // Ensure that the script runs after the window and Rough.js are fully loaded
+        window.addEventListener('load', () => {
+            // Function to initialize Rough.js on a canvas
+            function initializeCanvas(id) {
+                const canvas = document.getElementById(id);
+
+                // Check if canvas exists and is a valid <canvas> element
+                if (!canvas || canvas.tagName !== 'CANVAS') {
+                    console.error(`Canvas with id '${id}' is missing or not a valid <canvas>.`);
+                    return null;
+                }
+
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error("Unable to get canvas context.");
+                    return null;
+                }
+
+                return rough.canvas(canvas);
+            }
+
+            // Initialize canvas for container
+            const containerCanvas = initializeCanvas('canvas');
+            if (containerCanvas) {
+                // Set the canvas size dynamically based on the container
+                const container = document.querySelector('.container');
+                const canvasElement = document.getElementById('canvas');
+                canvasElement.width = container.offsetWidth;
+                canvasElement.height = container.offsetHeight;
+
+                // Draw scribbled container borders
+                const containerRect = container.getBoundingClientRect();
+                containerCanvas.rectangle(0, 0, containerRect.width, containerRect.height, {
+                    roughness: 2, strokeWidth: 3, stroke: 'black'
+                });
+
+                // Add scribbled borders to input fields
+                const formInputs = document.querySelectorAll('input');
+                formInputs.forEach(input => {
+                    const inputRect = input.getBoundingClientRect();
+                    const inputX = inputRect.left - containerRect.left;
+                    const inputY = inputRect.top - containerRect.top;
+
+                    containerCanvas.rectangle(inputX, inputY, inputRect.width, inputRect.height, {
+                        roughness: 2, strokeWidth: 2, stroke: 'black'
+                    });
+                });
+
+                // Add scribbled border to button
+                const button = document.querySelector('button');
+                const buttonRect = button.getBoundingClientRect();
+                const buttonX = buttonRect.left - containerRect.left;
+                const buttonY = buttonRect.top - containerRect.top;
+
+                containerCanvas.rectangle(buttonX, buttonY, buttonRect.width, buttonRect.height, {
+                    roughness: 2, strokeWidth: 2, stroke: 'black'
+                });
+            }
+
+            // Initialize canvas for background scribbles
+            const backgroundCanvas = initializeCanvas('background-scribbles');
+            if (backgroundCanvas) {
+                const bgWidth = backgroundCanvas.canvas.width;
+                const bgHeight = backgroundCanvas.canvas.height;
+
+                // Draw colorful circles in the background
+                for (let i = 0; i < 10; i++) {
+                    const size = Math.random() * 100 + 50;
+                    const x = Math.random() * bgWidth;
+                    const y = Math.random() * bgHeight;
+                    backgroundCanvas.circle(x, y, size, {
+                        roughness: 2, strokeWidth: 2, stroke: 'black', fill: `rgba(255, 204, 0, ${Math.random()})`
+                    });
+                }
+            }
+
+            // Letter animation for title
+            const title = document.getElementById('title');
+            const titleText = title.textContent;
+            title.innerHTML = ''; // Clear existing text
+
+            titleText.split('').forEach((letter, index) => {
+                const span = document.createElement('span');
+                span.textContent = letter;
+                title.appendChild(span);
+
+                // Trigger animation
+                setTimeout(() => {
+                    span.style.opacity = 1;
+                    span.style.animationDelay = `${index * 0.1}s`; // Staggered effect for each letter
+                }, index * 100); // Stagger animation for each letter
+            });
+        });
+    </script>
+
+</body>
+</html>
